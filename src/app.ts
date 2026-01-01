@@ -14,8 +14,6 @@ class App {
         this.express.use("/health", (_req, res) => {
             res.json({
                 message: "Servidor funcionando!",
-                code: 200,
-                error: null
             })
         })
     }
