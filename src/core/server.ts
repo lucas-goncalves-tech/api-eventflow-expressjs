@@ -12,8 +12,8 @@ class Server {
 
   public shutdown = (signal: string) => {
     console.log(`Sinal recebido: ${signal}`);
-    this.server?.close(() => {
-      pool.end();
+    this.server?.close(async () => {
+      await pool.end();
       process.exit(0);
     });
     this.server?.closeAllConnections();
