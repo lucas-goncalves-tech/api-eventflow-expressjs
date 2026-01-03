@@ -1,0 +1,9 @@
+{
+  "databaseUrl": {
+    "ENV": "DATABASE_URL"
+  },
+  "migrationsTable": "pgmigrations",
+  "dir": "/app/src/database/migrations",
+  "timestamp": true,
+  "decamelize": true
+}
