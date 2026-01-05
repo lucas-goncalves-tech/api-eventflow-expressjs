@@ -3,7 +3,8 @@
     "ENV": "DATABASE_URL"
   },
   "migrationsTable": "pgmigrations",
-  "dir": "/app/src/database/migrations",
+  "dir": "src/database/migrations",
+  "ignorePattern": "config.*",
   "timestamp": true,
   "decamelize": true
 }

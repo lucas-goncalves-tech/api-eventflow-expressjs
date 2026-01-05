@@ -1,5 +1,6 @@
 import { Pool, type PoolConfig } from "pg";
 import { env } from "../core/config/env";
+import { singleton } from "tsyringe";
 
 const basePoolConfig: PoolConfig = {
   connectionString: env.DATABASE_URL,
@@ -15,12 +16,24 @@ const productionPool: PoolConfig = {
 };
 
 const isDev = env.NODE_ENV === "development";
-const pool = new Pool(isDev ? basePoolConfig : productionPool);
-if (isDev) {
-  pool.on("connect", () => console.log("Nova conexão criada"));
-  pool.on("acquire", () => console.log("Conexão emprestada"));
-}
-pool.on("remove", () => console.log("Conexão removida"));
-pool.on("error", (err) => console.error("Erro no pool:", err.message));
 
-export { pool };
+@singleton()
+export class DatabasePool {
+  private readonly pool = new Pool(isDev ? basePoolConfig : productionPool);
+  constructor() {
+    if (isDev) {
+      this.pool.on("connect", () => console.log("Nova conexão criada"));
+      this.pool.on("acquire", () => console.log("Conexão emprestada"));
+    }
+    this.pool.on("remove", () => console.log("Conexão removida"));
+    this.pool.on("error", (err) => console.error("Erro no pool:", err.message));
+  }
+
+  async query(sql: string, params: unknown[]) {
+    return await this.pool.query(sql, params);
+  }
+
+  async end() {
+    await this.pool.end();
+  }
+}
