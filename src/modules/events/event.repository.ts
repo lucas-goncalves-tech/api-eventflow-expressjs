@@ -68,7 +68,7 @@ export class EventRepository {
     try {
       const event = await this.pool.query(
         `INSERT INTO events (title, description, starts_at, ends_at, location, capacity)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            VALUES ($1, $2, $3, $4, $5, COALESCE($6, 100))
             RETURNING *`,
         [
           data.title,

@@ -2,7 +2,7 @@ import { container, injectable } from "tsyringe";
 import { EventController } from "./event.controller";
 import { Router } from "express";
 import { validate } from "../../shared/middlewares/validate.middleware";
-import { createEventDto } from "./dto/event.dto";
+import { createEventDto, updateEventDto } from "./dto/event.dto";
 import { eventsParamsSchema, eventsQuerySchema } from "./dto/event-params.dto";
 
 @injectable()
@@ -24,12 +24,22 @@ export class EventRoutes {
     this.router.post(
       "/",
       validate({ body: createEventDto }),
-      this.controller.createEvent
+      this.controller.create
     );
     this.router.get(
       "/:id",
       validate({ params: eventsParamsSchema }),
       this.controller.findById
+    );
+    this.router.put(
+      "/:id",
+      validate({ params: eventsParamsSchema, body: updateEventDto }),
+      this.controller.update
+    );
+    this.router.delete(
+      "/:id",
+      validate({ params: eventsParamsSchema }),
+      this.controller.delete
     );
   }
 

@@ -5,7 +5,7 @@ export type IEvent = {
   starts_at: Date;
   ends_at: Date;
   location?: string;
-  capacity: number;
+  capacity?: number;
   created_at?: Date;
   deleted_at?: Date;
 };
