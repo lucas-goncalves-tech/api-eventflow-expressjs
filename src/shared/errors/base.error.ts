@@ -11,8 +11,8 @@ export class BaseError extends Error {
     if (details instanceof ZodError) {
       errors.push(
         ...details.issues.map((issue) => ({
-          message: issue.message,
-          path: issue.path,
+          error: issue.message,
+          path: issue.path[0],
         }))
       );
       this.details = errors;
