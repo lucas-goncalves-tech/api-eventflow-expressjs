@@ -13,13 +13,13 @@ export function validate(schema: SchemaProps) {
   return (req: Request, _res: Response, next: NextFunction) => {
     try {
       if (schema.body) {
-        req.body = schema.body.parse(req.body);
+        req.safeBody = schema.body.parse(req.body);
       }
       if (schema.params) {
-        req.params = schema.params.parse(req.params) as (typeof req)["params"];
+        req.safeParams = schema.params.parse(req.params);
       }
       if (schema.query) {
-        req.query = schema.query.parse(req.query) as (typeof req)["query"];
+        req.safeQuery = schema.query.parse(req.query);
       }
       next();
     } catch (err) {
