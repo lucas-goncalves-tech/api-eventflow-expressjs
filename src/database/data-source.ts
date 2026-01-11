@@ -5,7 +5,6 @@ import { singleton } from "tsyringe";
 const basePoolConfig: PoolConfig = {
   connectionString: env.DATABASE_URL,
   max: env.MAX_POOL,
-  idleTimeoutMillis: 10_000,
   connectionTimeoutMillis: 5_000,
 };
 
