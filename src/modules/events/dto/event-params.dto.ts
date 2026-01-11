@@ -10,4 +10,9 @@ export const eventsQuerySchema = z.strictObject({
   limit: zodSafeNumber().default(10),
 });
 
+export const eventsParamsSchema = z.strictObject({
+  id: z.uuid(),
+});
+
 export type EventsQueryDTO = z.infer<typeof eventsQuerySchema>;
+export type EventsParamsDTO = z.infer<typeof eventsParamsSchema>;

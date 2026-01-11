@@ -3,7 +3,7 @@ import { EventController } from "./event.controller";
 import { Router } from "express";
 import { validate } from "../../shared/middlewares/validate.middleware";
 import { createEventDto } from "./dto/event.dto";
-import { eventsQuerySchema } from "./dto/event-params.dto";
+import { eventsParamsSchema, eventsQuerySchema } from "./dto/event-params.dto";
 
 @injectable()
 export class EventRoutes {
@@ -25,6 +25,11 @@ export class EventRoutes {
       "/",
       validate({ body: createEventDto }),
       this.controller.createEvent
+    );
+    this.router.get(
+      "/:id",
+      validate({ params: eventsParamsSchema }),
+      this.controller.findById
     );
   }
 

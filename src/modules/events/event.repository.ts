@@ -14,11 +14,13 @@ export class EventRepository {
   ) {}
 
   async findById(id: string) {
+    console.log("ID", id);
     try {
       const result = await this.pool.query(
-        `SELECT * FROM events WHERE id = $1 AND deleted_at = NULL`,
+        `SELECT * FROM events WHERE id = $1 AND deleted_at IS NULL`,
         [id]
       );
+      console.log("Result", result);
       return result.rows[0] ?? null;
     } catch (err) {
       console.log("Não foi possivel Encontrar evento por ID", err);
