@@ -1,6 +1,10 @@
 import { inject, injectable } from "tsyringe";
 import { DatabasePool } from "../../database/data-source";
-import type { ICreateEvent, IEvent } from "./interfaces/event.interface";
+import type {
+  ICreateEvent,
+  IEvent,
+  IEventsQuery,
+} from "./interfaces/event.interface";
 
 @injectable()
 export class EventRepository {
@@ -22,22 +26,24 @@ export class EventRepository {
     }
   }
 
-  async FindMany(search?: string, limit: number = 10, page: number = 1) {
+  async findMany({ search, limit = 10, page = 1 }: IEventsQuery) {
     const offset = (page - 1) * limit;
     const safeLimit = Math.min(limit, 100);
     const searchLike = `%${search}%`;
     const index = search ? 2 : 1;
+    const values: unknown[] = [];
     let query = `SELECT *, COUNT(*) OVER () AS total FROM events WHERE deleted_at IS NULL`;
     let result;
     try {
       if (search) {
         query += ` AND title ILIKE $1`;
+        values.push(searchLike);
       }
-
+      values.push(safeLimit, offset);
       result = await this.pool.query(
         query +
           ` ORDER BY created_at DESC LIMIT $${index} OFFSET $${index + 1}`,
-        [searchLike, safeLimit, offset]
+        values
       );
       const total =
         result.rows.length > 0 ? parseInt(result.rows[0].total, 10) : 0;
