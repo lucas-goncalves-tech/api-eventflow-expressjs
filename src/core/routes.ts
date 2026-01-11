@@ -10,11 +10,11 @@ export class Routes {
     this.setupRoutes();
   }
 
-  private setupRoutes(): void {
+  private setupRoutes() {
     this.router.use("/events", this.eventRoutes.getRouter());
   }
 
-  public getRouter(): Router {
+  public getRouter() {
     return this.router;
   }
 }

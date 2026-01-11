@@ -1,9 +1,11 @@
-import { container } from "tsyringe";
+import { container, injectable } from "tsyringe";
 import { EventController } from "./event.controller";
 import { Router } from "express";
 import { validate } from "../../shared/middlewares/validate.middleware";
 import { createEventDto } from "./dto/event.dto";
+import { eventsQuerySchema } from "./dto/event-params.dto";
 
+@injectable()
 export class EventRoutes {
   private controller: EventController;
   private router: Router;
@@ -13,7 +15,12 @@ export class EventRoutes {
     this.setupRoutes();
   }
 
-  private setupRoutes(): void {
+  private setupRoutes() {
+    this.router.get(
+      "/",
+      validate({ query: eventsQuerySchema }),
+      this.controller.findMany
+    );
     this.router.post(
       "/",
       validate({ body: createEventDto }),
@@ -21,7 +28,7 @@ export class EventRoutes {
     );
   }
 
-  public getRouter(): Router {
+  public getRouter() {
     return this.router;
   }
 }

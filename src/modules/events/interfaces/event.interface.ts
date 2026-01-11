@@ -11,3 +11,8 @@ export type IEvent = {
 };
 
 export type ICreateEvent = Omit<IEvent, "id" | "created_at" | "deleted_at">;
+export type IEventsQuery = {
+  search?: string;
+  limit?: number;
+  page?: number;
+};
