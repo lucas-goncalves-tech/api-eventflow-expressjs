@@ -1,35 +1,13 @@
-import { inject } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { DatabasePool } from "../../database/data-source";
-import type { IEvent } from "./interfaces/event.interface";
+import type { ICreateEvent, IEvent } from "./interfaces/event.interface";
 
+@injectable()
 export class EventRepository {
   constructor(
     @inject(DatabasePool)
     private pool: DatabasePool
   ) {}
-
-  async create(data: IEvent) {
-    try {
-      const event = await this.pool.query(
-        `INSERT INTO events (title, description, starts_at, ends_at, location, capacity)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *`,
-        [
-          data.title,
-          data.description,
-          data.starts_at,
-          data.ends_at,
-          data.location,
-          data.capacity,
-        ]
-      );
-      console.log(event.rows);
-      return event.rows[0];
-    } catch (err) {
-      console.error("Erro ao criar evento:", err);
-      throw err;
-    }
-  }
 
   async findById(id: string) {
     try {
@@ -78,6 +56,27 @@ export class EventRepository {
     }
   }
 
+  async create(data: ICreateEvent) {
+    try {
+      const event = await this.pool.query(
+        `INSERT INTO events (title, description, starts_at, ends_at, location, capacity)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING *`,
+        [
+          data.title,
+          data.description,
+          data.starts_at,
+          data.ends_at,
+          data.location,
+          data.capacity,
+        ]
+      );
+      return event.rows[0];
+    } catch (err) {
+      console.error("Erro ao criar evento:", err);
+      throw err;
+    }
+  }
   async update(id: string, eventData: Partial<IEvent>) {
     const toUpdate: string[] = [];
     const values: unknown[] = [];

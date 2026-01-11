@@ -1,11 +1,13 @@
-export interface IEvent {
+export type IEvent = {
   id: string;
   title: string;
   description?: string;
   starts_at: Date;
   ends_at: Date;
-  location: string;
+  location?: string;
   capacity: number;
   created_at?: Date;
   deleted_at?: Date;
-}
+};
+
+export type ICreateEvent = Omit<IEvent, "id" | "created_at" | "deleted_at">;
