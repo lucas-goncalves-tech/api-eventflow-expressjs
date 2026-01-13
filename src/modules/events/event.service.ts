@@ -29,11 +29,12 @@ export class EventService {
   }
 
   async update(id: string, eventData: UpdateEventDTO) {
+    if (Object.keys(eventData).length === 0) {
+      throw new BadRequestError("Nenhum dado fornecido para atualização");
+    }
+
     const result = await this.eventRepository.update(id, eventData);
-    if (!result)
-      throw new BadRequestError(
-        "Evento não encontrado ou nenhum dado para atualizar"
-      );
+    if (!result) throw new NotFoundError("Evento não encontrado");
     return result;
   }
 
