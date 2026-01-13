@@ -25,16 +25,17 @@ export class EventController {
     const result = await this.eventService.create(eventData);
     res.status(201).json({
       message: `Evento ${result.title} criado com sucesso`,
+      data: result,
     });
   };
 
   update = async (req: Request, res: Response) => {
     const { id } = req.safeParams as EventsParamsDTO;
     const eventData = req.safeBody as UpdateEventDTO;
-    console.log("BODY", eventData);
     const result = await this.eventService.update(id, eventData);
     res.json({
       message: `Evento ${result.title} atualizado com sucesso`,
+      data: result,
     });
   };
 
