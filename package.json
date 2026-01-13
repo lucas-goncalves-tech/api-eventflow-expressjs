@@ -8,6 +8,11 @@
   "main": "./dist/server.js",
   "scripts": {
     "dev": "tsx --watch ./src/core/server.ts",
+    "start": "node ./dist/server.js",
+    "docker:up": "docker compose -f compose.yaml -f compose.dev.yaml up -d",
+    "docker:down": "docker compose down",
+    "logs:api": "docker compose logs -f api",
+    "logs:db": "docker compose logs -f db",
     "migrate:up": "tsx node_modules/.bin/node-pg-migrate up -m src/database/migrations",
     "migrate:down": "tsx node_modules/.bin/node-pg-migrate down -m src/database/migrations",
     "migrate:create": "node-pg-migrate create -j ts -m src/database/migrations",
