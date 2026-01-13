@@ -4,6 +4,7 @@ import type {
   ICreateEvent,
   IEvent,
   IEventsQuery,
+  IFindManyEvents,
 } from "./interfaces/event.interface";
 
 @injectable()
@@ -14,21 +15,23 @@ export class EventRepository {
   ) {}
 
   async findById(id: string) {
-    console.log("ID", id);
     try {
       const result = await this.pool.query(
         `SELECT * FROM events WHERE id = $1 AND deleted_at IS NULL`,
         [id]
       );
-      console.log("Result", result);
       return result.rows[0] ?? null;
     } catch (err) {
-      console.log("Não foi possivel Encontrar evento por ID", err);
+      console.error("Não foi possivel Encontrar evento por ID", err);
       throw err;
     }
   }
 
-  async findMany({ search, limit = 10, page = 1 }: IEventsQuery) {
+  async findMany({
+    search,
+    limit = 10,
+    page = 1,
+  }: IEventsQuery): Promise<IFindManyEvents> {
     const offset = (page - 1) * limit;
     const safeLimit = Math.min(limit, 100);
     const searchLike = `%${search}%`;
@@ -59,7 +62,7 @@ export class EventRepository {
         },
       };
     } catch (err) {
-      console.log("NÂO foi possivel encontrar todos os eventos", err);
+      console.error("Não foi possivel encontrar todos os eventos", err);
       throw err;
     }
   }
@@ -95,8 +98,6 @@ export class EventRepository {
       toUpdate.push(`${key} = $${i++}`);
       values.push(value);
     }
-
-    if (toUpdate.length === 0) return null;
 
     try {
       const result = await this.pool.query(
