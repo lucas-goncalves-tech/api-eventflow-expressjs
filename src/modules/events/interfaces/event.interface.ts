@@ -16,3 +16,20 @@ export type IEventsQuery = {
   limit?: number;
   page?: number;
 };
+
+export type IFindManyEvents = {
+  data: IEvent[];
+  meta: {
+    total: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+  };
+};
+
+export type ICreateEventResponse = {
+  message: string;
+  data: IEvent;
+};
+
+export type IUpdateEventResponse = ICreateEventResponse;
