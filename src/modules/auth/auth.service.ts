@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import { ConflictError } from "../../shared/errors/conflict.error";
 import { BadRequestError } from "../../shared/errors/bad-request.error";
 import type { ISignupInput, ISigninInput } from "./interface/auth.interface";
+import { generateToken } from "../../shared/security/token.security";
 
 @injectable()
 export class AuthService {
@@ -47,7 +48,10 @@ export class AuthService {
     if (!passwordMatch) {
       throw new BadRequestError("Email ou senha inválidos");
     }
-    const { password_hash, id, ...userWithoutPassword } = userExist;
-    return userWithoutPassword;
+
+    return generateToken({
+      sid: userExist.id,
+      role: userExist.role,
+    });
   }
 }
