@@ -1,4 +1,4 @@
-import { MigrationBuilder } from "node-pg-migrate";
+import { MigrationBuilder, PgLiteral } from "node-pg-migrate";
 
 export const shorthands = undefined;
 
@@ -30,7 +30,7 @@ export async function up(pgm) {
     capacity: {
       type: "INTEGER",
       notNull: true,
-      default: 100,
+      default: "100",
     },
     created_at: {
       type: "TIMESTAMPTZ",

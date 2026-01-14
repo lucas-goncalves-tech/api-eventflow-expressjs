@@ -13,12 +13,13 @@
     "docker:down": "docker compose down",
     "logs:api": "docker compose logs -f api",
     "logs:db": "docker compose logs -f db",
-    "migrate:up": "node-pg-migrate up -m src/database/migrations",
-    "migrate:down": "node-pg-migrate down -m src/database/migrations",
+    "migrate:up": "docker compose exec api npx node-pg-migrate up -m src/database/migrations",
+    "migrate:down": "docker compose exec api npx node-pg-migrate down -m src/database/migrations",
     "migrate:create": "node-pg-migrate create -m src/database/migrations",
     "test": "docker compose exec api npx vitest"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.2.1",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
@@ -26,6 +27,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.3",
     "@types/pg": "^8.16.0",

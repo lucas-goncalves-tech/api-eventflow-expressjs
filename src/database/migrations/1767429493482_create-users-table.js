@@ -1,4 +1,4 @@
-import { MigrationBuilder } from "node-pg-migrate";
+import { MigrationBuilder, PgLiteral } from "node-pg-migrate";
 
 export const shorthands = undefined;
 
@@ -24,7 +24,7 @@ export async function up(pgm) {
     },
     role: {
       type: "varchar(15)",
-      default: `'USER'`,
+      default: "USER",
       notNull: true,
     },
     created_at: {
