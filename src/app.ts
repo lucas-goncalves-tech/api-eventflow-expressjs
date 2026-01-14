@@ -23,6 +23,14 @@ export class App {
       });
     });
     this.express.use("/api/v1/", container.resolve(Routes).getRouter());
+    this.express.use("", (req, res) => {
+      const route = req.path;
+      const method = req.method;
+      console.log(route);
+      res.json({
+        message: `Rota ${method} -> ${route} não encontrada!`,
+      });
+    });
   }
 
   private init() {
