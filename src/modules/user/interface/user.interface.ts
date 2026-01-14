@@ -3,7 +3,7 @@ export type IUser = {
   email: string;
   name: string;
   password_hash: string;
-  role: string;
+  role: "USER" | "ORGANIZER" | "ADMIN";
   created_at: Date;
 };
 
