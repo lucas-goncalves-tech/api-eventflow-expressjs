@@ -1,13 +1,12 @@
 import { injectable } from "tsyringe";
-import type { SigninDto } from "./dto/signin.dto";
 import { UserRepository } from "../user/user.repository";
 import { inject } from "tsyringe";
 import { env } from "../../core/config/env";
 import bcrypt from "bcrypt";
 import { ConflictError } from "../../shared/errors/conflict.error";
-import { BadRequestError } from "../../shared/errors/bad-request.error";
 import type { ISignupInput, ISigninInput } from "./interface/auth.interface";
 import { generateToken } from "../../shared/security/token.security";
+import { UnauthorizedError } from "../../shared/errors/unauthorized.error";
 
 @injectable()
 export class AuthService {
@@ -39,19 +38,21 @@ export class AuthService {
   async login(data: ISigninInput) {
     const userExist = await this.userRepository.findByEmail(data.email);
     if (!userExist) {
-      throw new BadRequestError("Email ou senha inválidos");
+      throw new UnauthorizedError("Email ou senha inválidos");
     }
     const passwordMatch = await bcrypt.compare(
       data.password,
       userExist.password_hash
     );
     if (!passwordMatch) {
-      throw new BadRequestError("Email ou senha inválidos");
+      throw new UnauthorizedError("Email ou senha inválidos");
     }
 
-    return generateToken({
-      sid: userExist.id,
-      role: userExist.role,
-    });
+    return {
+      token: generateToken({
+        sid: userExist.id,
+        role: userExist.role,
+      }),
+    };
   }
 }
