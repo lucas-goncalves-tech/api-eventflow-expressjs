@@ -20,7 +20,7 @@ export class AuthController {
 
   login = async (req: Request, res: Response) => {
     const { email, password } = req.safeBody as SigninDto;
-    const token = await this.authService.login({ email, password });
+    const { token } = await this.authService.login({ email, password });
 
     res.cookie(SID_HEADER, token, sidCookieOptions());
     return res.status(204).end();
