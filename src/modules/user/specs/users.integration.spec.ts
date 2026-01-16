@@ -16,7 +16,7 @@ describe("GET /api/v1/users/me", ()=> {
             password: "12345678"
         }
 
-        await registerNewUser(AUTH_URL, credentials);
+        await registerNewUser(credentials);
         const loginRes = await req.post(AUTH_URL + "/login").send(credentials);
         const cookies = loginRes.headers["set-cookie"]
 

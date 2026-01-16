@@ -4,10 +4,10 @@ import { container } from "tsyringe";
 import { App } from "../../app";
 
 
-export async function registerNewUser(BASE_URL: string, override?: Record<string, unknown>) {
+export async function registerNewUser(override?: Record<string, unknown>) {
 const req = request(container.resolve(App).express);
 
-  return await req.post(`${BASE_URL}/register`).send({
+  return await req.post("/api/v1/auth/register").send({
     email: "test@test.com",
     name: "testUser",
     password: "12345678",

@@ -9,7 +9,7 @@ const req = request(container.resolve(App).express);
 
 describe("POST /api/v1/auth/register", () => {
   it("should return status 201 and new user with valid body", async () => {
-    const result = await registerNewUser(BASE_URL);
+    const result = await registerNewUser();
 
     expect(result.status).toBe(201);
     expect(result.body).toMatchObject({
@@ -21,15 +21,15 @@ describe("POST /api/v1/auth/register", () => {
   });
 
   it("should return status 409 when send duplicated email", async () => {
-    await registerNewUser(BASE_URL);
-    const result = await registerNewUser(BASE_URL);
+    await registerNewUser();
+    const result = await registerNewUser();
 
     expect(result.status).toBe(409);
     expect(result.body).toHaveProperty("message");
   });
 
   it("should return status 400 when send extra fields", async () => {
-    const result = await registerNewUser(BASE_URL,{
+    const result = await registerNewUser({
       role: "ADMIN",
     });
 
@@ -45,7 +45,7 @@ describe("POST /api/v1/auth/login", () => {
       email: "test@valid.com",
       password: "12345678",
     };
-    await registerNewUser(BASE_URL, credentials);
+    await registerNewUser(credentials);
 
     const result = await req.post(`${BASE_URL}/login`).send(credentials);
     const cookie = result.headers["set-cookie"]?.[0].toLowerCase() ?? "";
@@ -63,7 +63,7 @@ describe("POST /api/v1/auth/login", () => {
       email: "test@invalid.com",
       password: "12345678",
     };
-    await registerNewUser(BASE_URL);
+    await registerNewUser();
 
     const result = await req.post(`${BASE_URL}/login`).send(credentials);
 
