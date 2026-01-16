@@ -20,11 +20,6 @@ const isDev = env.NODE_ENV === "development";
 export class DatabasePool {
   private readonly pool = new Pool(isDev ? basePoolConfig : productionPool);
   constructor() {
-    if (isDev) {
-      this.pool.on("connect", () => console.log("Nova conexão criada"));
-      this.pool.on("acquire", () => console.log("Conexão emprestada"));
-    }
-    this.pool.on("remove", () => console.log("Conexão removida"));
     this.pool.on("error", (err) => console.error("Erro no pool:", err.message));
   }
 
