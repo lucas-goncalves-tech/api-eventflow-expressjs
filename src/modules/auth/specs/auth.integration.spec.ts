@@ -1,24 +1,15 @@
-import { App } from "../../../app";
 import { describe, expect, it } from "vitest";
+import { registerNewUser } from "../../../shared/helpers/auth-spec.helper";
 import request from "supertest";
 import { container } from "tsyringe";
+import { App } from "../../../app";
 
-const req = request(container.resolve(App).express);
 const BASE_URL = "/api/v1/auth";
-
-async function registerNewUser(override?: Record<string, unknown>) {
-  return await req.post(`${BASE_URL}/register`).send({
-    email: "test@test.com",
-    name: "testUser",
-    password: "12345678",
-    confirmPassword: "12345678",
-    ...override,
-  });
-}
+const req = request(container.resolve(App).express);
 
 describe("POST /api/v1/auth/register", () => {
   it("should return status 201 and new user with valid body", async () => {
-    const result = await registerNewUser();
+    const result = await registerNewUser(BASE_URL);
 
     expect(result.status).toBe(201);
     expect(result.body).toMatchObject({
@@ -30,15 +21,15 @@ describe("POST /api/v1/auth/register", () => {
   });
 
   it("should return status 409 when send duplicated email", async () => {
-    await registerNewUser();
-    const result = await registerNewUser();
+    await registerNewUser(BASE_URL);
+    const result = await registerNewUser(BASE_URL);
 
     expect(result.status).toBe(409);
     expect(result.body).toHaveProperty("message");
   });
 
   it("should return status 400 when send extra fields", async () => {
-    const result = await registerNewUser({
+    const result = await registerNewUser(BASE_URL,{
       role: "ADMIN",
     });
 
@@ -54,7 +45,7 @@ describe("POST /api/v1/auth/login", () => {
       email: "test@valid.com",
       password: "12345678",
     };
-    await registerNewUser(credentials);
+    await registerNewUser(BASE_URL, credentials);
 
     const result = await req.post(`${BASE_URL}/login`).send(credentials);
     const cookie = result.headers["set-cookie"]?.[0].toLowerCase() ?? "";
@@ -72,7 +63,7 @@ describe("POST /api/v1/auth/login", () => {
       email: "test@invalid.com",
       password: "12345678",
     };
-    await registerNewUser();
+    await registerNewUser(BASE_URL);
 
     const result = await req.post(`${BASE_URL}/login`).send(credentials);
 
