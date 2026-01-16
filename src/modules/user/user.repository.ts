@@ -6,6 +6,20 @@ import type { IUser, IUserInput } from "./interface/user.interface";
 export class UserRepository {
   constructor(@inject(DatabasePool) private readonly pool: DatabasePool) {}
 
+    async findById(id: string): Promise<IUser | null> {
+    try {
+      const result = await this.pool.query(
+        `SELECT * FROM users WHERE id = $1`,
+        [id]
+      );
+
+      return result.rows[0] ?? null;
+    } catch (error) {
+      console.error("Erro ao buscar usuário por ID:", error);
+      throw error;
+    }
+  }
+
   async findByEmail(email: string): Promise<IUser | null> {
     try {
       const result = await this.pool.query(
