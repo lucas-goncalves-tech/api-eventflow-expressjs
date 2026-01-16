@@ -1,9 +1,9 @@
 import { inject, injectable } from "tsyringe";
 import { DatabasePool } from "../../database/data-source";
-import type { IUser, IUserInput } from "./interface/user.interface";
+import type { IUser, IUserInput, IUserRepository } from "./interface/user.interface";
 
 @injectable()
-export class UserRepository {
+export class UserRepository implements IUserRepository{
   constructor(@inject(DatabasePool) private readonly pool: DatabasePool) {}
 
     async findById(id: string): Promise<IUser | null> {

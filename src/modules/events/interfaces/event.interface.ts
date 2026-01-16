@@ -10,6 +10,18 @@ export type IEvent = {
   deleted_at?: Date;
 };
 
+export type IEventRepository = {
+  findById: (id: string) => Promise<IEvent | null>;
+  findMany({
+    search,
+    limit,
+    page,
+  }: IEventsQuery): Promise<IFindManyEvents>;
+  create: (data: ICreateEvent) => Promise<IEvent>;
+  update: (id: string, eventData: Partial<IEvent>) => Promise<IEvent>;
+  delete: (id: string) => Promise<number | null>
+}
+
 export type ICreateEvent = Omit<IEvent, "id" | "created_at" | "deleted_at">;
 export type IEventsQuery = {
   search?: string;

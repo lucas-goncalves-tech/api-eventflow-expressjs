@@ -12,3 +12,9 @@ export type IUserInput = {
   name: string;
   password_hash: string;
 };
+
+export type IUserRepository = {
+  findById: (id: string) =>  Promise<IUser | null>;
+  findByEmail: (email: string) => Promise<IUser | null>;
+  create: (data: IUserInput) => Promise<IUser | null>
+}
