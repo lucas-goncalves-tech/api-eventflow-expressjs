@@ -24,15 +24,25 @@ describe("Auth Service UNIT", () => {
     };
 
     const { password, ...rest } = newCredentials;
-    const fakeUser = { id: "UUID", password_hash: "hash1234", ...rest };
+    const fakeUser = {
+      id: "UUID",
+      password_hash: "hash1234",
+      created_at: new Date().toISOString(),
+      role: "USER",
+      ...rest,
+    };
     mockRepository.findByEmail.mockResolvedValue(null);
     mockRepository.create.mockResolvedValue(fakeUser);
     const result = await service.register(newCredentials);
 
     expect(result).not.toHaveProperty("id");
     expect(result).not.toHaveProperty("password_hash");
-    expect(result).toHaveProperty("email");
-    expect(result).toHaveProperty("name");
+    expect(result).toMatchObject({
+      email: expect.any(String),
+      name: expect.any(String),
+      role: "USER",
+      created_at: expect.any(String),
+    });
   });
 
   it("should throw ConflictError when send existing email", async () => {
