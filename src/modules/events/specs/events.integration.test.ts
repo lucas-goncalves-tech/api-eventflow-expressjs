@@ -9,9 +9,10 @@ import type {
   IUpdateEventResponse,
 } from "../interfaces/event.interface";
 
+const req = request(container.resolve(App).express);
+
 const BASE_URL = "/api/v1/events";
-const endpoints = {
-  findMany: BASE_URL,
+const endpoint = {
   withId: (id: string) => `${BASE_URL}/${id}`,
 };
 
@@ -43,13 +44,10 @@ const createEvent = async (
   };
 };
 
-const app = container.resolve(App).express;
-const req = request(app);
-
 describe("GET /api/v1/events", () => {
   it(`should return status 200 with pagination`, async () => {
     const { payload } = await createEvent();
-    const res = await req.get(endpoints.findMany);
+    const res = await req.get(BASE_URL);
     const body: IFindManyEvents = res.body;
 
     expect(res.status).toBe(200);
@@ -65,7 +63,7 @@ describe("GET /api/v1/events", () => {
     for (let i = 1; i <= 3; i++) {
       await createEvent();
     }
-    const res = await req.get(`${endpoints.findMany}?page=2&limit=2`);
+    const res = await req.get(`${BASE_URL}?page=2&limit=2`);
     const body: IFindManyEvents = res.body;
 
     expect(res.status).toBe(200);
@@ -79,7 +77,7 @@ describe("GET /api/v1/events/:id", () => {
     const { response: createRes } = await createEvent();
     const createdEvent: ICreateEventResponse = createRes.body;
 
-    const res = await req.get(`${endpoints.withId(createdEvent.data.id)}`);
+    const res = await req.get(`${endpoint.withId(createdEvent.data.id)}`);
 
     expect(res.status).toBe(200);
     expect(res.body).toBeDefined();
@@ -88,7 +86,7 @@ describe("GET /api/v1/events/:id", () => {
   });
 
   it("should return status 400 with invalid UUID", async () => {
-    const res = await req.get(`${endpoints.withId("1234")}`);
+    const res = await req.get(`${endpoint.withId("1234")}`);
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("message");
@@ -97,7 +95,7 @@ describe("GET /api/v1/events/:id", () => {
 
   it("should return status 404 when event not found", async () => {
     const UUID = crypto.randomUUID();
-    const res = await req.get(`${endpoints.withId(UUID)}`);
+    const res = await req.get(`${endpoint.withId(UUID)}`);
 
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty("message");
@@ -151,7 +149,7 @@ describe("PUT /api/v1/events/:id", () => {
     };
 
     const updateRes = await req
-      .put(endpoints.withId(createdEvent.data.id))
+      .put(endpoint.withId(createdEvent.data.id))
       .send(updatePayload);
     const updatedEvent: IUpdateEventResponse = updateRes.body;
 
@@ -170,7 +168,7 @@ describe("PUT /api/v1/events/:id", () => {
   it("should return 404 when event not found", async () => {
     const UUID = crypto.randomUUID();
     const response = await req
-      .put(endpoints.withId(UUID))
+      .put(endpoint.withId(UUID))
       .send(generatePayload());
 
     expect(response.status).toBe(404);
@@ -183,7 +181,7 @@ describe("DELETE /api/v1/events/:id", () => {
     const { response: createRes } = await createEvent();
     const createdEvent: ICreateEventResponse = createRes.body;
 
-    const response = await req.delete(endpoints.withId(createdEvent.data.id));
+    const response = await req.delete(endpoint.withId(createdEvent.data.id));
 
     expect(response.status).toBe(204);
     expect(response.body).toEqual({});
@@ -191,7 +189,7 @@ describe("DELETE /api/v1/events/:id", () => {
 
   it("should return 404 when event not found", async () => {
     const UUID = crypto.randomUUID();
-    const response = await req.delete(endpoints.withId(UUID));
+    const response = await req.delete(endpoint.withId(UUID));
 
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty("message");
