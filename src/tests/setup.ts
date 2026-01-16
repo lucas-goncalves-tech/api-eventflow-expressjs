@@ -19,7 +19,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await testPool.query(`TRUNCATE events CASCADE`);
+  await testPool.query(`TRUNCATE events, users CASCADE`);
 });
 
 afterAll(async () => {
