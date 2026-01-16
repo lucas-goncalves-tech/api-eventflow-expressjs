@@ -120,7 +120,6 @@ describe("POST /api/v1/events", () => {
     const { response } = await createEvent({
       banana: "arroz",
     });
-    console.log(response);
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("message");
