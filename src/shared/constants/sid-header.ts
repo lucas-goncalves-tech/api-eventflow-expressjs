@@ -7,8 +7,6 @@ function parseExpiration(exp: string) {
 
   const value = parseInt(match[1]);
   const unit = match[2];
-  console.log("value: ", value);
-  console.log("unit: ", unit);
 
   const multipliers: Record<string, number> = {
     s: 1000,
