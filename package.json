@@ -10,7 +10,7 @@
     "dev": "tsx --watch ./src/core/server.ts",
     "start": "node ./dist/server.js",
     "docker:up": "docker compose -f compose.yaml -f compose.dev.yaml up -d",
-    "docker:down": "docker compose down",
+    "docker:down": "docker compose -f compose.yaml -f compose.dev.yaml down",
     "logs:api": "docker compose logs -f api",
     "logs:db": "docker compose logs -f db",
     "migrate:up": "docker compose exec api npx node-pg-migrate up -m src/database/migrations",
