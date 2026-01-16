@@ -5,7 +5,7 @@ import { container } from "tsyringe";
 import { App } from "../../../app";
 
 const BASE_URL = '/api/v1/users/me'
-const AUTH_URL = '/api/v1/auth/';
+const AUTH_URL = '/api/v1/auth';
 const req = request(container.resolve(App).express)
 
 
@@ -16,8 +16,8 @@ describe("GET /api/v1/users/me", ()=> {
             password: "12345678"
         }
 
-        await registerNewUser(AUTH_URL + "register", credentials);
-        const loginRes = await req.post(AUTH_URL + "login").send(credentials);
+        await registerNewUser(AUTH_URL, credentials);
+        const loginRes = await req.post(AUTH_URL + "/login").send(credentials);
         const cookies = loginRes.headers["set-cookie"]
 
         const result = await req.get(BASE_URL).set("Cookie", cookies)
