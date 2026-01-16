@@ -4,6 +4,10 @@ declare global {
       safeBody?: unknown;
       safeParams?: unknown;
       safeQuery?: unknown;
+      user?: {
+        sid: string,
+        role: "USER" | "ORGANIZER" | "ADMIN"
+      }
     }
   }
 }

@@ -1,6 +1,14 @@
 import jwt, { type SignOptions } from "jsonwebtoken";
 import { env } from "../../core/config/env";
 import { UnauthorizedError } from "../errors/unauthorized.error";
+import z from "zod";
+
+const payloadSchema = z.object({
+  sid: z.uuid(),
+  role: z.enum(["USER", "ORGANIZER", "ADMIN"]),
+  iat: z.coerce.number(),
+  exp: z.coerce.number()
+})
 
 export function generateToken(payload: {
   sid: string;
@@ -13,7 +21,7 @@ export function generateToken(payload: {
 
 export function verifyToken(token: string) {
   try {
-    return jwt.verify(token, env.JWT_SECRET);
+    return payloadSchema.parse(jwt.verify(token, env.JWT_SECRET));    
   } catch {
     throw new UnauthorizedError("Token inválido ou expirado");
   }
