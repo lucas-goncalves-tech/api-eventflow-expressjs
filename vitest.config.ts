@@ -6,6 +6,7 @@ export default defineConfig({
     environment: "node",
     env: dotenv.config({ path: ".env.test" }).parsed,
     globals: true,
+    fileParallelism: false, // Evita conflito de migrations entre arquivos
     include: ["**/*.{test,spec}.ts"],
     setupFiles: ["./src/tests/setup.ts"],
     coverage: {
