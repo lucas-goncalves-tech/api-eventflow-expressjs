@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser"
 import { container, injectable } from "tsyringe";
 import { errorGlobalHandler } from "./shared/middlewares/error.middleware";
 import { Routes } from "./core/routes";
@@ -16,6 +17,7 @@ export class App {
 
   private routes() {
     this.express.use(express.json());
+    this.express.use(cookieParser());
 
     this.express.use("/health", (_req, res) => {
       res.json({
@@ -26,7 +28,6 @@ export class App {
     this.express.use("", (req, res) => {
       const route = req.path;
       const method = req.method;
-      console.log(route);
       res.json({
         message: `Rota ${method} -> ${route} não encontrada!`,
       });
