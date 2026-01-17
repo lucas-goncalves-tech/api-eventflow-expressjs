@@ -8,6 +8,7 @@ import type {
   IFindManyEvents,
   IUpdateEventResponse,
 } from "../interfaces/event.interface";
+import { generateNewEvent } from "../../../shared/helpers/event-spec.helper";
 
 const req = request(container.resolve(App).express);
 
@@ -16,26 +17,10 @@ const endpoint = {
   withId: (id: string) => `${BASE_URL}/${id}`,
 };
 
-const generatePayload = (overrides?: Record<string, unknown>) => {
-  const now = new Date();
-  let starts_at = new Date(now);
-  starts_at.setDate(now.getDate() + 7);
-  let ends_at = new Date(now);
-  ends_at.setDate(now.getDate() + 14);
-
-  return {
-    title: "Rock in Rio",
-    description: "Insane show",
-    starts_at,
-    ends_at,
-    ...overrides,
-  };
-};
-
 const createEvent = async (
   override?: Partial<CreateEventDTO> | Record<string, unknown>
 ) => {
-  const payload = generatePayload(override);
+  const payload = generateNewEvent(override);
   const response = await req.post(BASE_URL).send(payload);
 
   return {
@@ -103,7 +88,7 @@ describe("GET /api/v1/events/:id", () => {
 });
 
 describe("POST /api/v1/events", () => {
-  it("should return status 201 with message and event data", async () => {
+  it("should return status 201 when role is ORGANIZED or ADMIN with message and event data", async () => {
     const { payload, response } = await createEvent();
     const body: ICreateEventResponse = response.body;
 
@@ -168,7 +153,7 @@ describe("PUT /api/v1/events/:id", () => {
     const UUID = crypto.randomUUID();
     const response = await req
       .put(endpoint.withId(UUID))
-      .send(generatePayload());
+      .send(generateNewEvent());
 
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty("message");

@@ -2,14 +2,17 @@ import { inject, injectable } from "tsyringe";
 import { EventRepository } from "./event.repository";
 import type { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 import { BadRequestError } from "../../shared/errors/bad-request.error";
-import type { IEvent } from "./interfaces/event.interface";
+import type { IEvent, IEventRepository } from "./interfaces/event.interface";
 import type { EventsQueryDTO } from "./dto/event-params.dto";
 import { NotFoundError } from "../../shared/errors/not-found.error";
+import { UserRepository } from "../user/user.repository";
+import type { IUserRepository } from "../user/interface/user.interface";
 
 @injectable()
 export class EventService {
   constructor(
-    @inject(EventRepository) private eventRepository: EventRepository
+    @inject(EventRepository) private eventRepository: IEventRepository,
+    @inject(UserRepository) private userRepository: IUserRepository
   ) {}
 
   async findById(id: string) {
