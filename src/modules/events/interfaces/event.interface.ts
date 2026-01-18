@@ -1,5 +1,6 @@
 export type IEvent = {
   id: string;
+  owner_id: string;
   title: string;
   description?: string;
   starts_at: Date;
@@ -12,17 +13,17 @@ export type IEvent = {
 
 export type IEventRepository = {
   findById: (id: string) => Promise<IEvent | null>;
-  findMany({
-    search,
-    limit,
-    page,
-  }: IEventsQuery): Promise<IFindManyEvents>;
-  create: (data: ICreateEvent) => Promise<IEvent>;
+  findMany({ search, limit, page }: IEventsQuery): Promise<IFindManyEvents>;
+  create: (userId: string, data: ICreateEvent) => Promise<IEvent>;
   update: (id: string, eventData: Partial<IEvent>) => Promise<IEvent>;
-  delete: (id: string) => Promise<number | null>
-}
+  delete: (id: string) => Promise<number | null>;
+};
 
-export type ICreateEvent = Omit<IEvent, "id" | "created_at" | "deleted_at">;
+export type ICreateEvent = Omit<
+  IEvent,
+  "id" | "created_at" | "deleted_at" | "owner_id"
+>;
+
 export type IEventsQuery = {
   search?: string;
   limit?: number;

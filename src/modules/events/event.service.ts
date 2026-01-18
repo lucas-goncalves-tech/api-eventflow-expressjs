@@ -7,42 +7,68 @@ import type { EventsQueryDTO } from "./dto/event-params.dto";
 import { NotFoundError } from "../../shared/errors/not-found.error";
 import { UserRepository } from "../user/user.repository";
 import type { IUserRepository } from "../user/interface/user.interface";
+import type { UserPayload } from "../../shared/security/token.security";
+import { ForbiddenError } from "../../shared/errors/forbidden.error";
 
 @injectable()
 export class EventService {
   constructor(
     @inject(EventRepository) private eventRepository: IEventRepository,
-    @inject(UserRepository) private userRepository: IUserRepository
   ) {}
 
+  private removeOwnerId(event: IEvent) {
+    const { owner_id, ...safe } = event;
+    return safe;
+  }
+
+  async findMany(findQuery: EventsQueryDTO) {
+    const result = await this.eventRepository.findMany(findQuery);
+    const safeEventList = result.data.map(({ owner_id, ...safe }) => safe);
+
+    return {
+      data: safeEventList,
+      meta: result.meta,
+    };
+  }
+
   async findById(id: string) {
-    const result = await this.eventRepository.findById(id);
-    if (!result) throw new NotFoundError("Evento não encontrado");
-    return result;
+    const eventExist = await this.eventRepository.findById(id);
+    if (!eventExist) {
+      throw new NotFoundError("Evento não encontrado");
+    }
+    return this.removeOwnerId(eventExist);
   }
 
-  async findMany({ search, limit, page }: EventsQueryDTO) {
-    return this.eventRepository.findMany({ search, limit, page });
+  async create(userId: string, eventData: CreateEventDTO) {
+    const result = await this.eventRepository.create(userId, eventData);
+    return this.removeOwnerId(result);
   }
 
-  async create(eventData: CreateEventDTO): Promise<IEvent> {
-    const result = await this.eventRepository.create(eventData);
-    if (!result) throw new BadRequestError("Erro ao criar evento");
-    return result;
-  }
+  async update(id: string, userData: UserPayload, eventData: UpdateEventDTO) {
+    const eventExist = await this.eventRepository.findById(id);
+    if (!eventExist) {
+      throw new NotFoundError("Evento não encontrado");
+    }
 
-  async update(id: string, eventData: UpdateEventDTO) {
-    if (Object.keys(eventData).length === 0) {
-      throw new BadRequestError("Nenhum dado fornecido para atualização");
+    if (userData.sid !== eventExist.owner_id && userData.role !== "ADMIN") {
+      throw new ForbiddenError();
     }
 
     const result = await this.eventRepository.update(id, eventData);
-    if (!result) throw new NotFoundError("Evento não encontrado");
-    return result;
+
+    return this.removeOwnerId(result);
   }
 
-  async delete(id: string) {
-    const result = await this.eventRepository.delete(id);
-    if (!result) throw new NotFoundError("Evento não encontrado");
+  async delete(id: string, userData: UserPayload) {
+    const eventExist = await this.eventRepository.findById(id);
+    if (!eventExist) {
+      throw new NotFoundError("Evento não encontrado");
+    }
+
+    if (userData.sid !== eventExist.owner_id && userData.role !== "ADMIN") {
+      throw new ForbiddenError();
+    }
+
+    await this.eventRepository.delete(id);
   }
 }

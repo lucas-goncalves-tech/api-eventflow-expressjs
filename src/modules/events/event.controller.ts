@@ -8,40 +8,13 @@ import type { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 export class EventController {
   constructor(@inject(EventService) private eventService: EventService) {}
 
-  findById = async (req: Request, res: Response) => {
-    const { id } = req.safeParams as EventsParamsDTO;
-    const result = await this.eventService.findById(id);
-    res.json(result);
-  };
+  findById = async (req: Request, res: Response) => {};
 
-  findMany = async (req: Request, res: Response) => {
-    const { search, limit, page } = req.safeQuery as EventsQueryDTO;
-    const result = await this.eventService.findMany({ search, limit, page });
-    res.json(result);
-  };
+  findMany = async (req: Request, res: Response) => {};
 
-  create = async (req: Request, res: Response) => {
-    const eventData = req.safeBody as CreateEventDTO;
-    const result = await this.eventService.create(eventData);
-    res.status(201).json({
-      message: `Evento ${result.title} criado com sucesso`,
-      data: result,
-    });
-  };
+  create = async (req: Request, res: Response) => {};
 
-  update = async (req: Request, res: Response) => {
-    const { id } = req.safeParams as EventsParamsDTO;
-    const eventData = req.safeBody as UpdateEventDTO;
-    const result = await this.eventService.update(id, eventData);
-    res.json({
-      message: `Evento ${result.title} atualizado com sucesso`,
-      data: result,
-    });
-  };
+  update = async (req: Request, res: Response) => {};
 
-  delete = async (req: Request, res: Response) => {
-    const { id } = req.safeParams as EventsParamsDTO;
-    await this.eventService.delete(id);
-    res.status(204).end();
-  };
+  delete = async (req: Request, res: Response) => {};
 }
