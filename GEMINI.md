@@ -106,9 +106,8 @@ Managed via `node-pg-migrate`.
 
 ## API Endpoints
 
-(Inferred from `src/core/routes.ts`)
-
 *   **Health Check:** `GET /health`
 *   **Base API Path:** `/api/v1`
-    *   **Events:** `/api/v1/events`
     *   **Auth:** `/api/v1/auth`
+    *   **Events:** `/api/v1/events`
+    *   **Users:** `/api/v1/users`
