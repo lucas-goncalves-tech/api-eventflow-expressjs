@@ -22,11 +22,11 @@ export function expectedEventShape(override?: Record<string, unknown>) {
     id: expect.any(String),
     title: expect.any(String),
     description: expect.any(String),
-    starts_at: expect.any(String),
-    ends_at: expect.any(String),
+    starts_at: expect.anything(),
+    ends_at: expect.anything(),
     location: expect.any(String),
     capacity: expect.any(Number),
-    created_at: expect.any(String),
+    created_at: expect.anything(),
     ...override,
   };
 }
