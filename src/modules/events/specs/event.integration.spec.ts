@@ -28,7 +28,7 @@ async function postEvent(
 }
 
 describe(`POST ${BASE_URL}`, () => {
-  it("should create event when role is ORGANIZER", async () => {
+  it("should return status 201 and create event when role is ORGANIZER", async () => {
     const { reqAgent } = await authUser("organizer");
     const { result } = await postEvent(reqAgent);
     const body = result.body as ICreateEventResponse;
@@ -87,4 +87,25 @@ describe(`POST ${BASE_URL}`, () => {
   });
 });
 
-describe(`GET ${BASE_URL}`, () => {});
+describe(`GET ${BASE_URL}`, () => {
+  it("should return status 200 with pagination structure", async () => {
+    const { reqAgent } = await authUser("organizer");
+    for (let i = 1; i <= 3; i++) {
+      await postEvent(reqAgent);
+    }
+    const shape = expectedEventShape();
+
+    const result = await req.get(BASE_URL);
+    const body = result.body as IFindManyEvents;
+
+    expect(result.status).toBe(200);
+    expect(body.data).toHaveLength(3);
+    expect(body.data[0]).toMatchObject(shape);
+    expect(body.meta).toEqual({
+      total: 3,
+      page: 1,
+      limit: 10,
+      totalPages: 1,
+    });
+  });
+});
