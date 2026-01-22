@@ -1,3 +1,5 @@
+import type { Role } from "./generic.type";
+
 declare global {
   namespace Express {
     interface Request {
@@ -5,9 +7,9 @@ declare global {
       safeParams?: unknown;
       safeQuery?: unknown;
       user?: {
-        sid: string,
-        role: "USER" | "ORGANIZER" | "ADMIN"
-      }
+        sid: string;
+        role: Role;
+      };
     }
   }
 }
