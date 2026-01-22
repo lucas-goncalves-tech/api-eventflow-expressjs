@@ -8,23 +8,12 @@ import { EventService } from "../event.service";
 
 import { NotFoundError } from "../../../shared/errors/not-found.error";
 import type { EventsQueryDTO } from "../dto/event-params.dto";
-import { generateNewEvent } from "../../../shared/helpers/event-spec.helper";
+import {
+  expectedEventShape,
+  generateNewEvent,
+} from "../../../shared/helpers/event-spec.helper";
 import type { UserPayload } from "../../../shared/security/token.security";
 import { ForbiddenError } from "../../../shared/errors/forbidden.error";
-
-function expectedEventShape(override?: Record<string, unknown>) {
-  return {
-    id: expect.any(String),
-    title: expect.any(String),
-    description: expect.any(String),
-    starts_at: expect.any(Date),
-    ends_at: expect.any(Date),
-    location: expect.any(String),
-    capacity: expect.any(Number),
-    created_at: expect.any(Date),
-    ...override,
-  };
-}
 
 function generateFakeEvent(override?: Partial<IEvent>): IEvent {
   const now = new Date();

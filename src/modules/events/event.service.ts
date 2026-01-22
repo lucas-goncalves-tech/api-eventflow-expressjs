@@ -21,6 +21,12 @@ export class EventService {
     return safe;
   }
 
+  private verifyOwnership(userData: UserPayload, ownerId: string) {
+    if (userData.sid !== ownerId && userData.role !== "ADMIN") {
+      throw new ForbiddenError();
+    }
+  }
+
   async findMany(findQuery: EventsQueryDTO) {
     const result = await this.eventRepository.findMany(findQuery);
     const safeEventList = result.data.map(({ owner_id, ...safe }) => safe);
@@ -50,9 +56,7 @@ export class EventService {
       throw new NotFoundError("Evento não encontrado");
     }
 
-    if (userData.sid !== eventExist.owner_id && userData.role !== "ADMIN") {
-      throw new ForbiddenError();
-    }
+    this.verifyOwnership(userData, eventExist.owner_id);
 
     const result = await this.eventRepository.update(id, eventData);
 

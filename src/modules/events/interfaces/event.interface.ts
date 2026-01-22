@@ -11,12 +11,14 @@ export type IEvent = {
   deleted_at?: Date;
 };
 
-export type IEventRepository = {
-  findById: (id: string) => Promise<IEvent | null>;
-  findMany({ search, limit, page }: IEventsQuery): Promise<IFindManyEvents>;
-  create: (userId: string, data: ICreateEvent) => Promise<IEvent>;
-  update: (id: string, eventData: Partial<IEvent>) => Promise<IEvent>;
-  delete: (id: string) => Promise<number | null>;
+export type IFindManyEvents = {
+  data: IEvent[];
+  meta: {
+    total: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+  };
 };
 
 export type ICreateEvent = Omit<
@@ -30,19 +32,17 @@ export type IEventsQuery = {
   page?: number;
 };
 
-export type IFindManyEvents = {
-  data: IEvent[];
-  meta: {
-    total: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-  };
-};
-
 export type ICreateEventResponse = {
   message: string;
   data: IEvent;
 };
 
 export type IUpdateEventResponse = ICreateEventResponse;
+
+export type IEventRepository = {
+  findById: (id: string) => Promise<IEvent | null>;
+  findMany({ search, limit, page }: IEventsQuery): Promise<IFindManyEvents>;
+  create: (userId: string, data: ICreateEvent) => Promise<IEvent>;
+  update: (id: string, eventData: Partial<IEvent>) => Promise<IEvent>;
+  delete: (id: string) => Promise<number | null>;
+};
