@@ -24,7 +24,7 @@ export const SID_HEADER =
 export function sidCookieOptions(maxAge?: number): CookieOptions {
   return {
     httpOnly: true,
-    secure: true,
+    secure: env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: maxAge ? maxAge : parseExpiration(env.JWT_EXPIRES),
   };

@@ -54,10 +54,9 @@ describe("POST /api/v1/auth/login", () => {
     expect(result.body).toEqual({});
     expect(cookie).toContain("sid");
     expect(cookie).toContain("httponly");
-    expect(cookie).toContain("secure");
     expect(cookie).toContain("samesite=lax");
   });
-  
+
   it("should return status 401  when credentials are invalid", async () => {
     const credentials = {
       email: "test@invalid.com",
@@ -68,6 +67,6 @@ describe("POST /api/v1/auth/login", () => {
     const result = await req.post(`${BASE_URL}/login`).send(credentials);
 
     expect(result.status).toBe(401);
-    expect(result.body).toHaveProperty("message")
+    expect(result.body).toHaveProperty("message");
   });
 });
