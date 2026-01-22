@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
 import { EventService } from "./event.service";
 import type { Request, Response } from "express";
-import type { EventsQueryDTO } from "./dto/event-params.dto";
-import type { CreateEventDTO } from "./dto/event.dto";
+import type { EventsParamsDTO, EventsQueryDTO } from "./dto/event-params.dto";
+import type { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
 
 @injectable()
 export class EventController {
@@ -15,7 +15,12 @@ export class EventController {
     res.json(result);
   };
 
-  findById = async (req: Request, res: Response) => {};
+  findById = async (req: Request, res: Response) => {
+    const { id } = req.safeParams as EventsParamsDTO;
+    const result = await this.eventService.findById(id);
+
+    res.json(result);
+  };
 
   create = async (req: Request, res: Response) => {
     const newEvent = req.safeBody as CreateEventDTO;
@@ -29,7 +34,24 @@ export class EventController {
     });
   };
 
-  update = async (req: Request, res: Response) => {};
+  update = async (req: Request, res: Response) => {
+    const { id } = req.safeParams as EventsParamsDTO;
+    const userData = req.user!;
+    const body = req.safeBody as UpdateEventDTO;
 
-  delete = async (req: Request, res: Response) => {};
+    const result = await this.eventService.update(id, userData, body);
+
+    res.json({
+      message: `Evento ${result.title} atualizado com sucesso`,
+      data: result,
+    });
+  };
+
+  delete = async (req: Request, res: Response) => {
+    const { id } = req.safeParams as EventsParamsDTO;
+    const userData = req.user!;
+    await this.eventService.delete(id, userData);
+
+    res.status(204).end();
+  };
 }

@@ -37,11 +37,15 @@ export class EventRoutes {
     );
     this.router.put(
       "/:id",
+      authValidate,
+      roleValidate("ORGANIZER"),
       validate({ params: eventsParamsSchema, body: updateEventDto }),
       this.controller.update,
     );
     this.router.delete(
       "/:id",
+      authValidate,
+      roleValidate("ORGANIZER"),
       validate({ params: eventsParamsSchema }),
       this.controller.delete,
     );

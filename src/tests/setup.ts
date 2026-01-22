@@ -38,6 +38,12 @@ beforeEach(async () => {
     `
     INSERT INTO users (email, name, password_hash, role)
     VALUES ($1, $2, $3, $4)`,
+    ["test@organizer-second.com", "organizer-second", hash, "ORGANIZER"],
+  );
+  await testPool.query(
+    `
+    INSERT INTO users (email, name, password_hash, role)
+    VALUES ($1, $2, $3, $4)`,
     ["test@admin.com", "admin", hash, "ADMIN"],
   );
 });

@@ -15,7 +15,9 @@ export async function registerNewUser(override?: Record<string, unknown>) {
   });
 }
 
-export async function authUser(userToBeLogged: "user" | "organizer" | "admin") {
+export async function authUser(
+  userToBeLogged: "user" | "organizer" | "organizer-second" | "admin",
+) {
   const reqAgent = agent(app);
   const email = `test@${userToBeLogged}.com`;
   const authResult = await reqAgent.post("/api/v1/auth/login").send({

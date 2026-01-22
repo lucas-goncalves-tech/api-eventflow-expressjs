@@ -1,12 +1,9 @@
 import { inject, injectable } from "tsyringe";
 import { EventRepository } from "./event.repository";
 import type { CreateEventDTO, UpdateEventDTO } from "./dto/event.dto";
-import { BadRequestError } from "../../shared/errors/bad-request.error";
 import type { IEvent, IEventRepository } from "./interfaces/event.interface";
 import type { EventsQueryDTO } from "./dto/event-params.dto";
 import { NotFoundError } from "../../shared/errors/not-found.error";
-import { UserRepository } from "../user/user.repository";
-import type { IUserRepository } from "../user/interface/user.interface";
 import type { UserPayload } from "../../shared/security/token.security";
 import { ForbiddenError } from "../../shared/errors/forbidden.error";
 
@@ -69,9 +66,7 @@ export class EventService {
       throw new NotFoundError("Evento não encontrado");
     }
 
-    if (userData.sid !== eventExist.owner_id && userData.role !== "ADMIN") {
-      throw new ForbiddenError();
-    }
+    this.verifyOwnership(userData, eventExist.owner_id);
 
     await this.eventRepository.delete(id);
   }

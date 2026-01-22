@@ -45,7 +45,18 @@ export class EventRepository implements IEventRepository {
     };
   }
 
-  async findById(id: string) {}
+  async findById(id: string) {
+    try {
+      const result = await this.pool.query(
+        `SELECT * FROM events WHERE id = $1`,
+        [id],
+      );
+      return result.rows[0] ?? null;
+    } catch (err) {
+      console.error("Erro ao buscar evento pelo ID: ", err);
+      throw err;
+    }
+  }
 
   async create(userId: string, data: ICreateEvent) {
     const keys: string[] = ["owner_id"];
@@ -58,18 +69,58 @@ export class EventRepository implements IEventRepository {
     }
     const index = values.map((_, i) => `$${i + 1}`);
 
-    const result = await this.pool.query(
-      `
-    INSERT INTO events (${keys.join(", ")}) 
-    VALUES (${index.join(", ")})
-    RETURNING *`,
-      values,
-    );
+    try {
+      const result = await this.pool.query(
+        `
+        INSERT INTO events (${keys.join(", ")}) 
+        VALUES (${index.join(", ")})
+        RETURNING *`,
+        values,
+      );
 
-    return result.rows[0] ?? null;
+      return result.rows[0] ?? null;
+    } catch (err) {
+      console.error("Error ao tentar criar event; ", err);
+      throw err;
+    }
   }
 
-  async update(id: string, eventData: Partial<IEvent>) {}
+  async update(id: string, eventData: Partial<IEvent>) {
+    const keys: string[] = [];
+    const values: unknown[] = [];
+    let i = 1;
 
-  async delete(id: string) {}
+    for (const [key, value] of Object.entries(eventData)) {
+      if (value === undefined) continue;
+      keys.push(`${key} = $${i++}`);
+      values.push(value);
+    }
+
+    try {
+      const result = await this.pool.query(
+        `
+        UPDATE events 
+        SET ${keys.join(", ")} 
+        WHERE id = $${i} 
+        RETURNING *`,
+        [...values, id],
+      );
+      return result.rows[0] ?? null;
+    } catch (err) {
+      console.error("Error ao atualizar dados de events: ", err);
+      throw err;
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      const result = await this.pool.query("DELETE FROM events WHERE id = $1", [
+        id,
+      ]);
+      return result.rowCount;
+    } catch (err) {
+      console.error("Error ao delete evento: ", err);
+      throw err;
+    }
+  }
 }

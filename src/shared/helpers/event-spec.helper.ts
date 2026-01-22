@@ -1,6 +1,9 @@
 import { expect } from "vitest";
+import type { UpdateEventDTO } from "../../modules/events/dto/event.dto";
 
-export const generateNewEvent = (overrides?: Record<string, unknown>) => {
+export const generateNewEvent = (
+  overrides?: UpdateEventDTO | Record<string, unknown>,
+) => {
   const now = new Date();
   let starts_at = new Date(now);
   starts_at.setDate(now.getDate() + 7);

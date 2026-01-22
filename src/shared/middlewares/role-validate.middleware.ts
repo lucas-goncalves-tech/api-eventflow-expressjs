@@ -1,9 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import type { Role } from "../types/generic.type";
 import { ForbiddenError } from "../errors/forbidden.error";
-import { UnauthorizedError } from "../errors/unauthorized.error";
 
-export function roleValidate(allowedRole: Omit<Role, "USER">) {
+export function roleValidate(allowedRole: Exclude<Role, "USER">) {
   return (req: Request, res: Response, next: NextFunction) => {
     const userRole = req.user?.role;
     if (!userRole)
