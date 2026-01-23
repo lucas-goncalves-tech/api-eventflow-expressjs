@@ -5,7 +5,7 @@ import { validate } from "../../shared/middlewares/validate.middleware";
 import { createEventDto, updateEventDto } from "./dto/event.dto";
 import { eventsParamsSchema, eventsQuerySchema } from "./dto/event-params.dto";
 import { authValidate } from "../../shared/middlewares/auth-validate.middleware";
-import { roleValidate } from "../../shared/middlewares/role-validate.middleware";
+import { requireRole } from "../../shared/middlewares/require-role.middleware";
 
 @injectable()
 export class EventRoutes {
@@ -31,21 +31,21 @@ export class EventRoutes {
     this.router.post(
       "/",
       authValidate,
-      roleValidate("ORGANIZER"),
+      requireRole("ORGANIZER"),
       validate({ body: createEventDto }),
       this.controller.create,
     );
     this.router.put(
       "/:id",
       authValidate,
-      roleValidate("ORGANIZER"),
+      requireRole("ORGANIZER"),
       validate({ params: eventsParamsSchema, body: updateEventDto }),
       this.controller.update,
     );
     this.router.delete(
       "/:id",
       authValidate,
-      roleValidate("ORGANIZER"),
+      requireRole("ORGANIZER"),
       validate({ params: eventsParamsSchema }),
       this.controller.delete,
     );

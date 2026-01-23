@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { Role } from "../types/generic.type";
 import { ForbiddenError } from "../errors/forbidden.error";
 
-export function roleValidate(allowedRole: Exclude<Role, "USER">) {
+export function requireRole(allowedRole: Exclude<Role, "USER">) {
   return (req: Request, res: Response, next: NextFunction) => {
     const userRole = req.user?.role;
     if (!userRole)

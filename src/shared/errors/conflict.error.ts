@@ -1,7 +1,7 @@
 import { BaseError } from "./base.error";
 
 export class ConflictError extends BaseError {
-  constructor(message: string = "Entidade já cadastrada") {
+  constructor(message = "Conflito de recursos") {
     super(message, 409);
   }
 }
