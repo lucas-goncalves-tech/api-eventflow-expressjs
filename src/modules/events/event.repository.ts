@@ -27,7 +27,7 @@ export class EventRepository implements IEventRepository {
     const queryFinal = ` ORDER BY "created_at" DESC LIMIT $${index} OFFSET $${index + 1} `;
 
     if (search) {
-      query += ` WHERE title ILIKE $1 OR description ILIKE $1`;
+      query += ` WHERE title ILIKE $1 OR description ILIKE $1 AND deleted_at IS NULL`;
       values.push(safeSearch);
     }
     values.push(safeLimit, safeOffset);
@@ -114,9 +114,10 @@ export class EventRepository implements IEventRepository {
 
   async delete(id: string) {
     try {
-      const result = await this.pool.query("DELETE FROM events WHERE id = $1", [
-        id,
-      ]);
+      const result = await this.pool.query(
+        "UPDATE events SET deleted_at = NOW() WHERE id = $1",
+        [id],
+      );
       return result.rowCount;
     } catch (err) {
       console.error("Error ao delete evento: ", err);
