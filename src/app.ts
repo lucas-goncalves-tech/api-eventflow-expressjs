@@ -15,6 +15,7 @@ export class App {
   }
 
   private middleware() {
+    this.express.set("trust proxy", 1);
     this.express.use(helmet());
     this.express.use(
       cors({
