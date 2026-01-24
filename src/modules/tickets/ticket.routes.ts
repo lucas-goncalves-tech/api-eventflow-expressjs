@@ -17,13 +17,6 @@ export class TicketRoutes {
   }
 
   private setupRoutes() {
-    // GET /events/:id/tickets → disponibilidade
-    this.router.get(
-      "/",
-      validate({ params: ticketParamsSchema }),
-      this.controller.getAvailability,
-    );
-
     // POST /events/:id/tickets → comprar ticket
     this.router.post(
       "/",

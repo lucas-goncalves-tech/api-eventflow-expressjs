@@ -1,113 +1,83 @@
-# EventFlow API (`eventflow-app`)
+# Event Flow API
 
 ## Project Overview
 
-`eventflow-app` is a backend API service built with **Node.js** and **Express**, utilizing **TypeScript** for type safety. It provides endpoints for managing events and user authentication.
+This is the backend API for the **Event Flow** application. It is built with **Node.js** and **Express.js**, written in **TypeScript**. The project follows a modular architecture using dependency injection and connects to a **PostgreSQL** database.
 
-**Key Technologies:**
-
-*   **Runtime:** Node.js
-*   **Framework:** Express.js (v5)
-*   **Language:** TypeScript
-*   **Database:** PostgreSQL
-*   **Database Driver:** `pg` (node-postgres)
-*   **Dependency Injection:** `tsyringe`
-*   **Validation:** `zod`
-*   **Testing:** `vitest`, `supertest`
-*   **Migrations:** `node-pg-migrate`
+### Key Technologies
+-   **Runtime:** Node.js
+-   **Framework:** Express.js (v5)
+-   **Language:** TypeScript
+-   **Database:** PostgreSQL (using `pg` driver)
+-   **Migrations:** `node-pg-migrate`
+-   **Dependency Injection:** `tsyringe`
+-   **Validation:** `zod`
+-   **Testing:** `vitest`, `supertest`
+-   **Containerization:** Docker & Docker Compose
 
 ## Architecture
 
-The project follows a **Modular Architecture** where features are organized into self-contained modules.
+The project is structured into modules (`src/modules`) and shared resources (`src/shared`). It uses a layered approach:
+1.  **Routes:** Define API endpoints.
+2.  **Controllers:** Handle HTTP requests and responses.
+3.  **Services:** Contain business logic.
+4.  **Repositories:** Interact with the database (raw SQL queries).
 
-### Directory Structure (`src/`)
+Dependency Injection (DI) is handled by `tsyringe`. `App` and `Server` classes are resolved from the container.
 
-*   **`app.ts`**: Application entry point, configures middlewares and routes.
-*   **`core/`**: Core infrastructure code.
-    *   `server.ts`: Server initialization and graceful shutdown logic.
-    *   `routes.ts`: Main router aggregating module routes.
-    *   `config/`: Configuration files (e.g., environment variables).
-*   **`database/`**: Database related files.
-    *   `data-source.ts`: PostgreSQL connection pool wrapper.
-    *   `migrations/`: SQL migration files managed by `node-pg-migrate`.
-*   **`modules/`**: Feature modules.
-    *   **`auth/`**: Authentication logic (SignUp, SignIn).
-    *   **`events/`**: Event management.
-    *   **`user/`**: User management.
-    *   *Structure within modules:* Typically includes `Controller`, `Service`, `Repository`, `Routes`, and `DTOs`.
-*   **`shared/`**: Shared utilities, errors, and middlewares.
-    *   `middlewares/`: Global middlewares (e.g., Error Handler, Validation).
-    *   `errors/`: Custom error classes.
+### Directory Structure
+-   `src/app.ts`: Main Express application setup.
+-   `src/core/`: Core configurations, server entry point (`server.ts`), and global routes.
+-   `src/database/`: Database connection (`data-source.ts`) and migrations.
+-   `src/modules/`: Feature modules (auth, events, tickets, user).
+-   `src/shared/`: Shared utilities, middlewares, errors, and types.
+-   `tests/`: Test setup.
 
-## Development
+## Building and Running
 
 ### Prerequisites
+-   Node.js
+-   Docker & Docker Compose
 
-*   Node.js (v20+ recommended)
-*   Docker & Docker Compose
+### Development Scripts
+The project uses `npm` scripts defined in `package.json`:
 
-### Quick Start (Docker)
-
-The easiest way to run the application is using Docker Compose, which sets up both the API and the PostgreSQL database.
-
-```bash
-# Start the application and database
-npm run docker:up
-
-# View API logs
-npm run logs:api
-
-# Stop the application
-npm run docker:down
-```
-
-The API will be available at `http://localhost:3333`.
-
-### Local Development
-
-1.  **Install Dependencies:**
-    ```bash
-    npm install
-    ```
-
-2.  **Environment Variables:**
-    Copy `.env.example` to `.env` and configure your local database credentials if running locally without Docker for the app itself.
-    ```bash
-    cp .env.example .env
-    ```
-
-3.  **Run Migrations:**
-    ```bash
-    npm run migrate:up
-    ```
-
-4.  **Start Development Server:**
+*   **Start Development Server:**
     ```bash
     npm run dev
     ```
-    This uses `tsx` to watch for changes in `src/core/server.ts`.
+    Uses `tsx` for hot-reloading.
 
-### Testing
+*   **Docker Environment:**
+    ```bash
+    npm run docker:up   # Start API and DB containers
+    npm run docker:down # Stop containers
+    ```
 
-Tests are configured using `vitest`.
+*   **View Logs:**
+    ```bash
+    npm run logs:api
+    npm run logs:db
+    ```
 
-```bash
-# Run tests inside the docker container
-npm test
-```
+*   **Migrations:**
+    ```bash
+    npm run migrate:up      # Run migrations
+    npm run migrate:down    # Revert migrations
+    npm run migrate:create -- <name> # Create new migration
+    ```
+    *Note: `migrate:up` and `migrate:down` execute inside the running API container.*
 
-## Database Migrations
+*   **Testing:**
+    ```bash
+    npm test
+    ```
+    Executes `vitest` inside the API container.
 
-Managed via `node-pg-migrate`.
+## Development Conventions
 
-*   **Create Migration:** `npm run migrate:create -- my_migration_name`
-*   **Run Migrations:** `npm run migrate:up`
-*   **Revert Migration:** `npm run migrate:down`
-
-## API Endpoints
-
-*   **Health Check:** `GET /health`
-*   **Base API Path:** `/api/v1`
-    *   **Auth:** `/api/v1/auth`
-    *   **Events:** `/api/v1/events`
-    *   **Users:** `/api/v1/users`
+-   **Dependency Injection:** Use `@injectable()` and `@inject()` decorators for classes and dependencies. Register classes in the DI container (mostly automatic with `tsyringe` for classes).
+-   **Database Access:** Use the `DatabasePool` singleton for executing raw SQL queries.
+-   **Validation:** Use `zod` schemas to validate request data (body, query, params).
+-   **Error Handling:** Throw custom error classes (e.g., `BadRequestError`, `NotFoundError`) from `src/shared/errors`. The global error handler middleware will format the response.
+-   **Testing:** Write unit/integration tests using `vitest`. Place tests in `specs/` folder within each module.

@@ -74,7 +74,6 @@ export class TicketService {
   }
 
   async listByUser(userId: string): Promise<ITicket[]> {
-    // TODO: Lista ingressos do usuário
-    throw new Error("Method not implemented.");
+    return await this.ticketRepository.findByUser(userId);
   }
 }

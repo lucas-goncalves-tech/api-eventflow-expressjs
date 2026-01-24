@@ -7,13 +7,6 @@ import type { TicketParamsDTO } from "./dto/ticket.dto";
 export class TicketController {
   constructor(@inject(TicketService) private ticketService: TicketService) {}
 
-  getAvailability = async (req: Request, res: Response) => {
-    const { id } = req.safeParams as TicketParamsDTO;
-    const result = await this.ticketService.getAvailability(id);
-
-    res.json(result);
-  };
-
   purchase = async (req: Request, res: Response) => {
     const { id: eventId } = req.safeParams as TicketParamsDTO;
     const { sid: userId } = req.user!;
@@ -22,6 +15,16 @@ export class TicketController {
 
     res.status(201).json({
       message: "Ticket adquirido com sucesso",
+      data: result,
+    });
+  };
+
+  listByUser = async (req: Request, res: Response) => {
+    const { sid: userId } = req.user!;
+
+    const result = await this.ticketService.listByUser(userId);
+
+    res.json({
       data: result,
     });
   };
