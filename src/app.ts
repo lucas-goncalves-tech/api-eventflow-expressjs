@@ -6,6 +6,7 @@ import { container, injectable } from "tsyringe";
 import { errorGlobalHandler } from "./shared/middlewares/error.middleware";
 import { Routes } from "./core/routes";
 import { env } from "./core/config/env";
+import { globalLimiter } from "./shared/middlewares/rate-limit.middleware";
 
 @injectable()
 export class App {
@@ -24,7 +25,7 @@ export class App {
         credentials: true,
       }),
     );
-
+    this.express.use(globalLimiter);
     this.express.use(express.json());
     this.express.use(cookieParser());
   }

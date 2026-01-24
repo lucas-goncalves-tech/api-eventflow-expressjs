@@ -5,8 +5,9 @@ import { afterAll, beforeAll, beforeEach } from "vitest";
 import { runner } from "node-pg-migrate";
 import path from "node:path";
 import bcrypt from "bcrypt";
+import { env } from "../core/config/env";
 
-const connectionString = "postgres://test:test@db_test:5432/eventflow_test";
+const connectionString = env.DATABASE_URL;
 const testPool = new Pool({ connectionString });
 
 beforeAll(async () => {

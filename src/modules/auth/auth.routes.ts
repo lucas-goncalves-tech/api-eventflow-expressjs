@@ -4,6 +4,7 @@ import { Router } from "express";
 import { validate } from "../../shared/middlewares/validate.middleware";
 import { signupDto } from "./dto/signup.dto";
 import { signinDto } from "./dto/signin.dto";
+import { authLimiter } from "../../shared/middlewares/rate-limit.middleware";
 
 @injectable()
 export class AuthRoutes {
@@ -16,15 +17,16 @@ export class AuthRoutes {
   }
 
   private setupRoutes() {
+    this.router.use(authLimiter);
     this.router.post(
       "/register",
       validate({ body: signupDto }),
-      this.controller.register
+      this.controller.register,
     );
     this.router.post(
       "/login",
       validate({ body: signinDto }),
-      this.controller.login
+      this.controller.login,
     );
   }
 
