@@ -1,4 +1,4 @@
-import { Pool, type PoolConfig } from "pg";
+import { Pool, type PoolClient, type PoolConfig } from "pg";
 import { env } from "../core/config/env";
 import { singleton } from "tsyringe";
 
@@ -25,6 +25,23 @@ export class DatabasePool {
 
   async query(sql: string, params: unknown[]) {
     return await this.pool.query(sql, params);
+  }
+
+  async transaction<T>(callback: (client: PoolClient) => Promise<T>) {
+    const client = await this.pool.connect();
+
+    try {
+      await client.query(`BEGIN`);
+      const result = await callback(client);
+      await client.query(`COMMIT`);
+      return result;
+    } catch (err) {
+      console.error("Erro na transaction: ", err);
+      await client.query(`ROLLBACK`);
+      throw err;
+    } finally {
+      client.release();
+    }
   }
 
   async end() {
